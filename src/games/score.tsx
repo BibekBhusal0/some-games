@@ -1,9 +1,10 @@
-import { FaArrowLeft, FaUndo, FaQuestionCircle } from "react-icons/fa";
+import { FaArrowLeft, FaUndo } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
 import { Tooltip } from "@nextui-org/tooltip";
 import { cn } from "@/lib/utils";
 import { IoIosUndo } from "react-icons/io";
 import ShinyButton from "@/components/button";
+import { Link } from "@nextui-org/link";
 
 function ScoreCard() {
   const score_class =
@@ -13,7 +14,7 @@ function ScoreCard() {
 
   return (
     <div className="w-full grid gap-2 grid-cols-12 grid-rows-2 h-24 mb-3">
-      <Button size="sm" id="menu" className={cn(big_button)}>
+      <Button size="sm" id="menu" href="/" as={Link} className={cn(big_button)}>
         <FaArrowLeft />
         <div>menu</div>
       </Button>

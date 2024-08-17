@@ -5,9 +5,17 @@ export default function DefaultLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const color = "#64748b";
+  const size = 1.4;
+  const spacing = 30;
   return (
-    <div className="relative flex flex-col h-screen">
-      <main className="container mx-auto max-w-sm px-6 flex-grow pt-16 pb-4">
+    <div
+      style={{
+        backgroundImage: `radial-gradient(${color} ${size}px, transparent ${size}px)`,
+        backgroundSize: `calc(${spacing} * ${size}px) calc(${spacing} * ${size}px)`,
+      }}
+      className="relative flex-center h-screen">
+      <main className="container max-w-xs px-3 py-6 bg-success-50">
         {children}
         <Footer />
       </main>

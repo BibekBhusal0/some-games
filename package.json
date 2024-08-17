@@ -2,7 +2,7 @@
   "name": "vite-template",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://bibekbhusal0.github.io/some-games/",
+  "homepage": "https://bibekbhusal0.github.io/some-games",
   "type": "module",
   "scripts": {
     "dev": "vite",

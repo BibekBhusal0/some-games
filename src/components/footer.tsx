@@ -7,13 +7,13 @@ import { Link } from "@nextui-org/link";
 export const Footer = () => {
   const links = [
     {
-      name: "View Sorce in Github",
+      name: "View Source Code in Github",
       link: "https://github.com/BibekBhusal0/some-games",
       icon: <FaGithub />,
     },
     {
       name: "View on Website",
-      link: "https://bibekbhusal.github.io/bibkebhusal0/some-games",
+      link: "https://bibekbhusal0.github.io/some-games/",
       icon: <LuGlobe />,
     },
   ];

@@ -1,0 +1,14 @@
+import Menu from "./menu";
+import Game2048 from "./game2048";
+import SlidingPuzzle from "./sliding_puzzle";
+
+export const pages_link: Record<string, string> = {
+  "2848": "some-games/2048",
+  "Sliding Puzzle": "some-games/sliding_puzze",
+};
+
+export const pages: Record<string, JSX.Element> = {
+  "/": <Menu />,
+  "/2048": <Game2048 />,
+  "/sliding_puzze": <SlidingPuzzle />,
+};
