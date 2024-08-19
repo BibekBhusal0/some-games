@@ -16,16 +16,17 @@ export default function MenuAnimation({ menuItems }: MenuAnimationProps) {
           className="group flex items-center gap-2">
           <FaArrowRight
             className={cn(
-              "size-5 -translate-x-full text-black opacity-0",
-              "transition-all duration-300 ease-out hover:z-20",
-              "group-hover:translate-x-0 group-hover:text-blue-500 group-hover:opacity-100"
+              "size-5 -translate-x-full opacity-0",
+              "transition-all duration-300 ease-out ",
+              "hover:z-20 group-hover:translate-x-0 group-hover:text-primary-600 group-hover:opacity-100"
             )}
           />
           <h1
             className={cn(
               "z-10 -translate-x-6 cursor-pointer ",
-              "font-mono font-semibold text-black transition-transform duration-300 ease-out",
-              "group-hover:translate-x-0 group-hover:text-blue-500 dark:text-white text-xl"
+              "font-mono font-semibold",
+              " transition-transform duration-300 ease-out",
+              "group-hover:translate-x-0 group-hover:text-primary-600 dark:text-white text-xl"
             )}>
             {item}
           </h1>

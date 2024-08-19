@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import { color } from "./colors";
+import { motion } from "framer-motion";
+// import { CSSProperties } from "react";
 
 function getFontSize(number: number, rows: number): string {
   const fontSizeMap: { [key: number]: string } = {
@@ -22,34 +24,46 @@ function getFontSize(number: number, rows: number): string {
   return `calc(${baseSize} / ${rowFactor})`;
 }
 
+const tileVariants = {
+  initial: { opacity: 0, scale: 0.2, x: 0, y: 0 }, // Add x and y for initial position
+  animate: { opacity: 1, scale: 1, x: 0, y: 0, transition: { duration: 0.1 } }, // Ensure animation to final position
+};
+
 function Tiles({
   number = undefined,
   rows = 4,
+  x = 0,
+  y = 0,
 }: {
   number?: number;
   rows?: number;
+  x?: number;
+  y?: number;
 }) {
   const common_class = "w-full aspect-square rounded-md";
-  const empty = <div className={cn(common_class, "bg-default-100")}></div>;
+  const empty = <div className={cn(common_class, "bg-default-200")}></div>;
   if (!number) {
     return empty;
   }
   const threshold = 4194304;
   var tileColor = color[number];
   if (!tileColor) {
-    if (number <= threshold) {
-      return empty;
-    } else tileColor = color[threshold];
+    tileColor = color[threshold];
   }
   return (
-    <div
+    <motion.div
       className={cn(common_class, "flex-center drop-shadow-2xl font-semibold")}
       style={{
         ...tileColor,
         fontSize: getFontSize(number, rows),
-      }}>
+        gridRowStart: y + 1,
+        gridColumnStart: x + 1,
+      }}
+      variants={tileVariants}
+      initial="initial"
+      animate="animate">
       {number}
-    </div>
+    </motion.div>
   );
 }
 

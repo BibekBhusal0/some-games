@@ -5,8 +5,29 @@ import { cn } from "@/lib/utils";
 import { IoIosUndo } from "react-icons/io";
 import ShinyButton from "@/components/button";
 import { Link } from "@nextui-org/link";
+import { ReactNode } from "react";
 
-function ScoreCard() {
+export interface ScoreCardProps {
+  score?: number;
+  best?: number;
+
+  score_title?: string;
+  best_title?: string;
+
+  onReset?: () => void;
+  onUndo?: () => void;
+
+  helper?: ReactNode[];
+}
+
+function ScoreCard({
+  score = 0,
+  best = 0,
+  onReset = () => {},
+  onUndo = () => {},
+  score_title = "score",
+  best_title = "best",
+}: ScoreCardProps) {
   const score_class =
     "col-span-3 row-span-2 flex-col flex-center gap-1 uppercase bg-warning-50 text-lg font-semibold rounded-md";
   const big_button = "col-span-4 h-full flex-center text-md capitalize";
@@ -20,22 +41,26 @@ function ScoreCard() {
       </Button>
 
       <Tooltip id="reset" content="reset">
-        <Button size="sm" className={cn(small_button)}>
+        <Button onPress={onReset} size="sm" className={cn(small_button)}>
           <FaUndo />
         </Button>
       </Tooltip>
 
       <div id="score" className={score_class}>
-        <div>score</div>
-        <div>123</div>
+        <div>{score_title}</div>
+        <div>{score}</div>
       </div>
 
       <div id="best" className={score_class}>
-        <div>best</div>
-        <div>123</div>
+        <div>{best_title}</div>
+        <div>{best}</div>
       </div>
 
-      <Button size="sm" id="undo" className={cn(big_button, "bg-default-400")}>
+      <Button
+        onPress={onUndo}
+        size="sm"
+        id="undo"
+        className={cn(big_button, "bg-default-400")}>
         <IoIosUndo />
         <div>Undo</div>
       </Button>
