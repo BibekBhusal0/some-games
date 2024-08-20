@@ -1,22 +1,23 @@
-export type boardType = (number | undefined)[][];
+export type rowType = (number | undefined)[];
+export type boardType = rowType[];
 export type directions = "up" | "down" | "left" | "right";
-type rotationType = 0 | 90 | 180 | 270;
+export type rotationType = 0 | 90 | 180 | 270;
 
-const rotations: Record<directions, rotationType> = {
+export const rotations: Record<directions, rotationType> = {
   left: 0,
   up: 90,
   right: 180,
   down: 270,
 };
 
-const reverseRotations: Record<directions, rotationType> = {
+export const reverseRotations: Record<directions, rotationType> = {
   up: rotations.down,
   down: rotations.up,
   left: rotations.left,
   right: rotations.right,
 };
 
-function are_changes_made(board: boardType, new_board: boardType) {
+export function are_changes_made(board: boardType, new_board: boardType) {
   if (board === new_board) return false;
 
   if (board.length !== new_board.length) return true;
@@ -30,52 +31,44 @@ function are_changes_made(board: boardType, new_board: boardType) {
   return false;
 }
 
-function move_empty_to_last(row: (number | undefined)[]) {
-  const non_zero = row.filter((cell) => cell !== undefined);
+function move_empty_to_last(row: rowType, empty_val = undefined): rowType {
+  const non_zero = row.filter((cell) => cell !== empty_val);
   const zero_count = row.length - non_zero.length;
-  return non_zero.concat(Array(zero_count).fill(undefined));
+  return non_zero.concat(Array(zero_count).fill(empty_val));
 }
 
-// function merge_row(row: (number | undefined)[]): (number | undefined)[] {
-//   const new_row: (number | undefined)[] = move_empty_to_last(row);
-//   for (let i = 0; i < new_row.length - 1; i++) {
-//     if (new_row[i] !== undefined && new_row[i] === new_row[i + 1]) {
-//       new_row[i] = new_row[i]! * 2;
-//       new_row[i + 1] = undefined;
-//     }
-//   }
-//   return move_empty_to_last(new_row);
-// }
-
-// function merge_board(board: boardType) {
-//   return board.map((row) => merge_row(row));
-// }
-
 function merge_row(
-  row: (number | undefined)[]
-): [scoreIncrement: number, newRow: (number | undefined)[]] {
+  row: rowType,
+  id_row: rowType
+): [scoreIncrement: number, newRow: rowType, id_row: rowType] {
   let scoreIncrement = 0;
-  const new_row: (number | undefined)[] = move_empty_to_last(row);
+  const new_row = move_empty_to_last(row);
+  const new_id_row = move_empty_to_last(id_row);
   for (let i = 0; i < new_row.length - 1; i++) {
     if (new_row[i] !== undefined && new_row[i] === new_row[i + 1]) {
       scoreIncrement += new_row[i]! * 2;
       new_row[i] = new_row[i]! * 2;
       new_row[i + 1] = undefined;
+      new_id_row[i] = new_id_row[i + 1];
+      new_id_row[i + 1] = undefined;
     }
   }
-  return [scoreIncrement, move_empty_to_last(new_row)];
+  return [scoreIncrement, move_empty_to_last(new_row), new_id_row];
 }
 
 function merge_board(
-  board: boardType
-): [scoreIncrement: number, newBoard: boardType] {
+  board: boardType,
+  id: boardType
+): [scoreIncrement: number, newBoard: boardType, new_id_row: boardType] {
   let scoreIncrement = 0;
-  const new_board = board.map((row) => {
-    const [increment, newRow] = merge_row(row);
+  let ids: boardType | undefined = [];
+  const new_board = board.map((row, i) => {
+    const [increment, newRow, new_id_row] = merge_row(row, id[i]);
+    if (new_id_row) ids.push(new_id_row);
     scoreIncrement += increment;
     return newRow;
   });
-  return [scoreIncrement, new_board];
+  return [scoreIncrement, new_board, ids];
 }
 
 function rotate_board(board: boardType, angle: rotationType): boardType {
@@ -93,18 +86,48 @@ function rotate_board(board: boardType, angle: rotationType): boardType {
   }
 }
 
+export function createPositionMap(
+  board: boardType
+): Map<number, [number, number]> {
+  const positionMap = new Map<number, [number, number]>();
+  board.forEach((row, i) => {
+    row.forEach((cell, j) => {
+      if (cell !== undefined) {
+        positionMap.set(cell, [i, j]);
+      }
+    });
+  });
+  return positionMap;
+}
+
 export class TwentyFourtyEight {
-  private board: boardType = [];
+  public id: boardType = [];
+  private max_id = 0;
+  public board: boardType = [];
   public gameOver: boolean = false;
   public score: number = 0;
   public size: number = 0;
+  public idMap: Map<number, [number, number]> = new Map();
+
+  public history = [
+    {
+      score: this.score,
+      id: this.id,
+      board: this.board,
+      idMap: this.idMap,
+    },
+  ];
 
   constructor(size: number = 4) {
     this.reset_board(size);
   }
 
   public reset_board(size: number = this.size) {
+    this.max_id = 0;
     this.board = Array(size)
+      .fill(undefined)
+      .map(() => new Array(size).fill(undefined));
+    this.id = Array(size)
       .fill(undefined)
       .map(() => new Array(size).fill(undefined));
 
@@ -112,12 +135,17 @@ export class TwentyFourtyEight {
     this.gameOver = false;
     this.score = 0;
     this.addRandom();
-  }
-  public getBoard() {
-    return this.board;
-  }
-  public setBoard(board: boardType) {
-    this.board = board;
+
+    this.idMap = createPositionMap(this.id);
+
+    this.history = [
+      {
+        score: this.score,
+        id: this.id,
+        board: this.board,
+        idMap: this.idMap,
+      },
+    ];
   }
 
   public getAllEmpty() {
@@ -138,6 +166,8 @@ export class TwentyFourtyEight {
     const value = Math.random() < 0.9 ? 2 : 4;
 
     this.board[x][y] = value;
+    this.max_id += 1;
+    this.id[x][y] = this.max_id;
   }
 
   public print(board = this.board) {
@@ -159,20 +189,49 @@ export class TwentyFourtyEight {
   public move(direction: directions) {
     if (!this.gameOver) {
       var new_board = rotate_board(this.board, rotations[direction]);
+      var new_id = rotate_board(this.id, rotations[direction]);
 
-      const [score, merged_board] = merge_board(new_board);
+      const [score, merged_board, merged_id] = merge_board(new_board, new_id);
       this.score += score;
+
       new_board = rotate_board(merged_board, reverseRotations[direction]);
+      new_id = rotate_board(merged_id, reverseRotations[direction]);
       const changes_made = are_changes_made(this.board, new_board);
 
       if (changes_made) {
         this.board = new_board;
+        this.id = new_id;
         this.gameOver = this.checkGameOver();
+
         this.addRandom();
+        this.idMap = createPositionMap(this.board);
+
+        if (this.history.length > 10) {
+          this.history.shift();
+        }
+        this.history.push({
+          score: this.score,
+          board: this.board,
+          id: this.id,
+          idMap: this.idMap,
+        });
       }
       return changes_made;
     }
     return false;
+  }
+
+  public undo() {
+    if (this.history.length > 1) {
+      this.history.pop();
+      const index = this.history.length - 1;
+      const game = this.history[index];
+      this.board = game.board;
+      this.id = game.id;
+      this.idMap = game.idMap;
+      this.score = game.score;
+      this.gameOver = this.checkGameOver();
+    }
   }
 
   public checkGameOver() {

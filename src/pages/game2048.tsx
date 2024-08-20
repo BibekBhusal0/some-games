@@ -1,31 +1,22 @@
 import Board from "@/2048/board";
-import { directions, TwentyFourtyEight } from "@/2048/logic";
+import { TwentyFourtyEight } from "@/2048/logic";
 import ScoreCard from "@/games/score";
 import useControls from "@/hooks/use-controls";
-import useSwipe from "@/hooks/use-swipe";
 import { useState } from "react";
 
 export default function Game2048() {
   const [game, setGame] = useState(new TwentyFourtyEight(4));
-  const [board, setBoard] = useState(game.getBoard());
+  const [board, setBoard] = useState(game.board);
 
   const reRender = () => {
     setGame(game);
-    setBoard(game.getBoard());
+    setBoard(game.board);
   };
 
-  const handleMove = (key: directions) => {
-    if (game.move(key)) {
+  useControls((direction) => {
+    if (game.move(direction)) {
       reRender();
     }
-  };
-
-  useControls((key) => {
-    handleMove(key);
-  });
-
-  useSwipe((direction) => {
-    handleMove(direction as directions);
   });
 
   return (
@@ -36,9 +27,21 @@ export default function Game2048() {
           game.reset_board();
           reRender();
         }}
+        onUndo={() => {
+          game.undo();
+          reRender();
+        }}
       />
-      <Board board={board} />
-      <div className="flex-center flex-wrap py-2 gap-2" id="controls"></div>
+      <Board
+        board={board}
+        ids={game.id}
+        position={game.idMap}
+        prevPosition={
+          game.history.length > 1
+            ? game.history[game.history.length - 2].idMap
+            : undefined
+        }
+      />
     </>
   );
 }

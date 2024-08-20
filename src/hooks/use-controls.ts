@@ -1,21 +1,13 @@
 import { directions } from "@/2048/logic";
-import { useEffect } from "react";
+import useSwipe from "./use-swipe";
+import useKeyboardControls from "./use-kbd";
 
-function useControls(callback: (direction: directions) => void) {
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      const direction = event.key
-        .replace("Arrow", "")
-        .toLowerCase() as directions;
-      callback(direction);
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [callback]);
+function useControls(
+  callback: (direction: directions) => void,
+  disabled = false
+) {
+  useSwipe(callback, disabled);
+  useKeyboardControls(callback, disabled);
 }
 
 export default useControls;

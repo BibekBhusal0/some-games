@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { color } from "./colors";
 import { motion } from "framer-motion";
-// import { CSSProperties } from "react";
 
 function getFontSize(number: number, rows: number): string {
   const fontSizeMap: { [key: number]: string } = {
@@ -24,47 +23,83 @@ function getFontSize(number: number, rows: number): string {
   return `calc(${baseSize} / ${rowFactor})`;
 }
 
-const tileVariants = {
-  initial: { opacity: 0, scale: 0.2, x: 0, y: 0 }, // Add x and y for initial position
-  animate: { opacity: 1, scale: 1, x: 0, y: 0, transition: { duration: 0.1 } }, // Ensure animation to final position
-};
-
 function Tiles({
   number = undefined,
+  x,
+  y,
   rows = 4,
-  x = 0,
-  y = 0,
+  prevX = undefined,
+  prevY = undefined,
 }: {
   number?: number;
   rows?: number;
-  x?: number;
-  y?: number;
+  x: number;
+  y: number;
+  prevX?: number;
+  prevY?: number;
 }) {
-  const common_class = "w-full aspect-square rounded-md";
-  const empty = <div className={cn(common_class, "bg-default-200")}></div>;
+  const tileSize = 100 / rows;
+  const padding = 8;
+  const getCoor = (x: number) => {
+    return `calc(${x * tileSize}% + ${padding / 2}px)`;
+    // calc(${y * tileSize}% + ${padding / 2}px)`;
+  };
+  const top = getCoor(y);
+  const left = getCoor(x);
+  const prevTop = prevY ? getCoor(prevY) : top;
+  const prevLeft = prevX ? getCoor(prevX) : left;
+  const width = `calc(${tileSize}% - ${padding}px)`;
+
+  const common_class = "absolute aspect-square rounded-md";
+  const empty = (
+    <div
+      className={cn(common_class, "bg-default-200 z-0")}
+      style={{ top, left, width }}></div>
+  );
+
   if (!number) {
     return empty;
   }
+
   const threshold = 4194304;
   var tileColor = color[number];
   if (!tileColor) {
     tileColor = color[threshold];
   }
+
   return (
     <motion.div
-      className={cn(common_class, "flex-center drop-shadow-2xl font-semibold")}
+      className={cn(
+        common_class,
+        "absolute flex-center drop-shadow-2xl font-semibold z-10"
+      )}
       style={{
         ...tileColor,
         fontSize: getFontSize(number, rows),
-        gridRowStart: y + 1,
-        gridColumnStart: x + 1,
+        width,
       }}
-      variants={tileVariants}
-      initial="initial"
-      animate="animate">
+      initial={{
+        // opacity: 0,
+        // scale: 0.3,
+        top: prevTop,
+        left: prevLeft,
+      }}
+      animate={{
+        top,
+        left,
+        // opacity: 1,
+        // scale: 1,
+      }}
+      // exit={{ opacity: 0, scale: 0.8 }}
+      // transition={{ type: "spring", stiffness: 300, damping: 400 }}
+      //
+    >
       {number}
     </motion.div>
   );
+  {
+    empty;
+  }
 }
 
 export default Tiles;
