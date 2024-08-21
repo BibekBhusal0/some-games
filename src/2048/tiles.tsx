@@ -1,4 +1,3 @@
-// 2048 / tiles.tsx
 import { cn } from "@/lib/utils";
 import { color } from "./colors";
 import { motion } from "framer-motion";
@@ -66,8 +65,7 @@ function Tiles({
   if (!tileColor) {
     tileColor = color[threshold];
   }
-  const isNewTile = prevX === undefined && prevY === undefined;
-  const isMergedTile = prevX === x && prevY === y;
+  const isNewTile = prevX === undefined && x;
 
   return (
     <>
@@ -91,7 +89,6 @@ function Tiles({
         animate={{
           top,
           left,
-          // scale: isMergedTile ? [1.1, 1] : 1,
           scale: 1,
         }}
         exit={{ opacity: 0, scale: 0.8 }}
@@ -99,7 +96,8 @@ function Tiles({
           type: "spring",
           stiffness: 500,
           damping: 30,
-          scale: { duration: 0.3, delay: isNewTile ? 0.3 : 0 },
+          duration: 0.2,
+          delay: isNewTile ? 0.1 : 0,
         }}
         //
       >

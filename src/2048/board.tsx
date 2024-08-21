@@ -52,13 +52,13 @@ function Board({
                   id === undefined ? [i, j] : prevPosition.get(id);
                 return (
                   <Tiles
-                    key={`${i}-${j}`}
+                    key={id ? id : `${i}-${j}`}
                     number={cell}
                     rows={n_row}
                     x={currentPos?.[1] || j}
                     y={currentPos?.[0] || i}
-                    prevX={previousPos?.[1] || j}
-                    prevY={previousPos?.[0] || i}
+                    prevX={previousPos?.[1]}
+                    prevY={previousPos?.[0]}
                   />
                 );
               })}
