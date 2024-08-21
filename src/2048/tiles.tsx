@@ -1,3 +1,4 @@
+// 2048 / tiles.tsx
 import { cn } from "@/lib/utils";
 import { color } from "./colors";
 import { motion } from "framer-motion";
@@ -42,7 +43,6 @@ function Tiles({
   const padding = 8;
   const getCoor = (x: number) => {
     return `calc(${x * tileSize}% + ${padding / 2}px)`;
-    // calc(${y * tileSize}% + ${padding / 2}px)`;
   };
   const top = getCoor(y);
   const left = getCoor(x);
@@ -66,40 +66,48 @@ function Tiles({
   if (!tileColor) {
     tileColor = color[threshold];
   }
+  const isNewTile = prevX === undefined && prevY === undefined;
+  const isMergedTile = prevX === x && prevY === y;
 
   return (
-    <motion.div
-      className={cn(
-        common_class,
-        "absolute flex-center drop-shadow-2xl font-semibold z-10"
-      )}
-      style={{
-        ...tileColor,
-        fontSize: getFontSize(number, rows),
-        width,
-      }}
-      initial={{
-        // opacity: 0,
-        // scale: 0.3,
-        top: prevTop,
-        left: prevLeft,
-      }}
-      animate={{
-        top,
-        left,
-        // opacity: 1,
-        // scale: 1,
-      }}
-      // exit={{ opacity: 0, scale: 0.8 }}
-      // transition={{ type: "spring", stiffness: 300, damping: 400 }}
-      //
-    >
-      {number}
-    </motion.div>
+    <>
+      <motion.div
+        className={cn(
+          common_class,
+          "absolute flex-center drop-shadow-2xl font-semibold z-10"
+        )}
+        style={{
+          ...tileColor,
+          fontSize: getFontSize(number, rows),
+          width,
+          top,
+          left,
+        }}
+        initial={{
+          top: prevTop ?? top,
+          left: prevLeft ?? left,
+          scale: isNewTile ? 0 : 1,
+        }}
+        animate={{
+          top,
+          left,
+          // scale: isMergedTile ? [1.1, 1] : 1,
+          scale: 1,
+        }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{
+          type: "spring",
+          stiffness: 500,
+          damping: 30,
+          scale: { duration: 0.3, delay: isNewTile ? 0.3 : 0 },
+        }}
+        //
+      >
+        {number}
+      </motion.div>
+      {empty}
+    </>
   );
-  {
-    empty;
-  }
 }
 
 export default Tiles;

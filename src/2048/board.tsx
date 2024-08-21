@@ -1,6 +1,7 @@
 import { Fragment } from "react/jsx-runtime";
 import Tiles from "./tiles";
 import { boardType } from "./logic";
+import { AnimatePresence } from "framer-motion";
 
 const empty4x4 = [
   [undefined, undefined, undefined, undefined],
@@ -25,45 +26,45 @@ function Board({
   return (
     <div className="w-full aspect-square bg-default-300 rounded-md p-2">
       <div className="relative size-full ">
-        {/* <AnimatePresence> */}
-        {board.map((row, i) => (
-          <Fragment key={i}>
-            {row.map((cell, j) => {
-              if (
-                ids === undefined ||
-                position === undefined ||
-                prevPosition === undefined
-              ) {
+        <AnimatePresence>
+          {board.map((row, i) => (
+            <Fragment key={i}>
+              {row.map((cell, j) => {
+                if (
+                  ids === undefined ||
+                  position === undefined ||
+                  prevPosition === undefined
+                ) {
+                  return (
+                    <Tiles
+                      key={`${i}-${j}`}
+                      number={cell}
+                      rows={n_row}
+                      x={j}
+                      y={i}
+                    />
+                  );
+                }
+
+                const id = ids[i][j];
+                const currentPos = id === undefined ? [i, j] : position.get(id);
+                const previousPos =
+                  id === undefined ? [i, j] : prevPosition.get(id);
                 return (
                   <Tiles
                     key={`${i}-${j}`}
                     number={cell}
                     rows={n_row}
-                    x={j}
-                    y={i}
+                    x={currentPos?.[1] || j}
+                    y={currentPos?.[0] || i}
+                    prevX={previousPos?.[1] || j}
+                    prevY={previousPos?.[0] || i}
                   />
                 );
-              }
-
-              const id = ids[i][j];
-              const currentPos = id === undefined ? [i, j] : position.get(id);
-              const previousPos =
-                id === undefined ? [i, j] : prevPosition.get(id);
-              return (
-                <Tiles
-                  key={`${i}-${j}`}
-                  number={cell}
-                  rows={n_row}
-                  x={currentPos?.[1] || j}
-                  y={currentPos?.[0] || i}
-                  prevX={previousPos?.[1] || j}
-                  prevY={previousPos?.[0] || i}
-                />
-              );
-            })}
-          </Fragment>
-        ))}
-        {/* </AnimatePresence> */}
+              })}
+            </Fragment>
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   );

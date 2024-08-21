@@ -1,6 +1,10 @@
 import { directions } from "@/2048/logic";
 
 export type sliding_puzzle_type = number[];
+export type sliding_puzzle_history = {
+  moves: number;
+  board: sliding_puzzle_type;
+};
 
 export default class SlidingPuzzle {
   public board: sliding_puzzle_type = [];
@@ -9,7 +13,7 @@ export default class SlidingPuzzle {
   public size: number = 0;
   public win: boolean = false;
 
-  public history = [
+  public history: sliding_puzzle_history[] = [
     {
       moves: this.moves,
       board: [...this.board],
@@ -55,12 +59,22 @@ export default class SlidingPuzzle {
   private checkWin() {
     return this.board.toString() === this.win_board.toString();
   }
-  // private get_valid_moves(board: sliding_puzzle_type = this.board) {
-  //   const all_directions: directions[] = ["right", "left", "up", "down"];
-  //   return all_directions.filter((direction) =>
-  //     this.is_valid_move(direction, board)
-  //   );
-  // }
+  public get_valid_moves(board: sliding_puzzle_type = this.board) {
+    const all_directions: directions[] = ["right", "left", "up", "down"];
+    return all_directions.filter((direction) =>
+      this.is_valid_move(direction, board)
+    );
+  }
+  public print(board = this.board) {
+    for (let i = 0; i < this.size; i++) {
+      let row = "";
+      for (let j = 0; j < this.size; j++) {
+        row += board[i * this.size + j] + " ";
+      }
+      console.log(row);
+    }
+    console.log("-------------");
+  }
   private shuffle(turns: number = 20) {
     let prev: directions | null = null;
     const moves: Record<directions, directions> = {
@@ -86,18 +100,21 @@ export default class SlidingPuzzle {
       }
     }
   }
-
-  public print(board = this.board) {
-    for (let i = 0; i < this.size; i++) {
-      let row = "";
-      for (let j = 0; j < this.size; j++) {
-        row += board[i * this.size + j] + " ";
-      }
-      console.log(row);
+  private save_history() {
+    if (this.history.length > 10) {
+      this.history.shift();
     }
-    console.log("-------------");
+    this.history.push({
+      moves: this.moves,
+      board: [...this.board],
+    });
   }
-
+  public load_history(history: sliding_puzzle_history[]) {
+    this.history = history;
+    const game = this.history[this.history.length - 1];
+    this.moves = game.moves;
+    this.board = game.board;
+  }
   public move(direction: directions, playing = true) {
     const zero = this.board.indexOf(0);
 
@@ -117,21 +134,13 @@ export default class SlidingPuzzle {
       if (playing) {
         this.moves++;
         this.win = this.checkWin();
-
-        if (this.history.length > 10) {
-          this.history.shift();
-        }
-        this.history.push({
-          moves: this.moves,
-          board: [...this.board],
-        });
+        this.save_history();
       }
 
       return true;
     }
     return false;
   }
-
   public undo() {
     if (this.history.length > 1) {
       this.history.pop();
