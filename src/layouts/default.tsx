@@ -15,7 +15,7 @@ export default function DefaultLayout({
         backgroundSize: `calc(${spacing} * ${size}px) calc(${spacing} * ${size}px)`,
       }}
       className="relative flex-center h-screen">
-      <main className="container max-w-sm px-3 py-6 bg-primary-50">
+      <main className="container max-w-sm px-3 py-6 bg-primary-50 relative">
         {children}
         <Footer />
       </main>

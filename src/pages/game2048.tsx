@@ -1,4 +1,5 @@
 import Board from "@/2048/board";
+import { instructions } from "@/2048/instructions";
 import { TwentyFourtyEight } from "@/2048/logic";
 import ScoreCard from "@/games/score";
 import useControls from "@/hooks/use-controls";
@@ -31,17 +32,9 @@ export default function Game2048() {
           game.undo();
           reRender();
         }}
+        helper={instructions}
       />
-      <Board
-        board={board}
-        ids={game.id}
-        position={game.idMap}
-        prevPosition={
-          game.history.length > 1
-            ? game.history[game.history.length - 2].idMap
-            : undefined
-        }
-      />
+      <Board board={board} ids={game.id} />
     </>
   );
 }

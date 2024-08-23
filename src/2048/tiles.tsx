@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { color } from "./colors";
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 function getFontSize(number: number, rows: number): string {
   const fontSizeMap: { [key: number]: string } = {
@@ -28,15 +29,11 @@ function Tiles({
   x,
   y,
   rows = 4,
-  prevX = undefined,
-  prevY = undefined,
 }: {
   number?: number;
   rows?: number;
   x: number;
   y: number;
-  prevX?: number;
-  prevY?: number;
 }) {
   const tileSize = 100 / rows;
   const padding = 8;
@@ -45,8 +42,23 @@ function Tiles({
   };
   const top = getCoor(y);
   const left = getCoor(x);
-  const prevTop = prevY ? getCoor(prevY) : top;
-  const prevLeft = prevX ? getCoor(prevX) : left;
+
+  const prevState = useRef<{ n?: number; top?: string }>({
+    n: undefined,
+    top: undefined,
+  });
+  useEffect(() => {
+    if (prevState.current.n !== number && number !== undefined) {
+      prevState.current.n = number;
+    }
+    prevState.current.top = top;
+  }, [number, top, prevState]);
+
+  const merged =
+    number !== undefined &&
+    prevState.current.n !== undefined &&
+    number !== prevState.current.n;
+  const prevTop = prevState.current.top;
   const width = `calc(${tileSize}% - ${padding}px)`;
 
   const common_class = "absolute aspect-square rounded-md";
@@ -65,7 +77,7 @@ function Tiles({
   if (!tileColor) {
     tileColor = color[threshold];
   }
-  const isNewTile = prevX === undefined && x;
+  const isNewTile = prevTop === undefined && x;
 
   return (
     <>
@@ -82,16 +94,14 @@ function Tiles({
           left,
         }}
         initial={{
-          top: prevTop ?? top,
-          left: prevLeft ?? left,
           scale: isNewTile ? 0 : 1,
         }}
         animate={{
           top,
           left,
-          scale: 1,
+          scale: merged ? [1.2, 1] : 1,
         }}
-        exit={{ opacity: 0, scale: 0.8 }}
+        exit={{ opacity: 0, scale: 1.2, transition: { delay: 0.1 } }}
         transition={{
           type: "spring",
           stiffness: 500,

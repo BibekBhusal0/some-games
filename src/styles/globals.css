@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+.embla {
+  overflow-x: hidden;
+}
+.embla__container {
+  display: flex;
+}
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
 @layer components {
   .flex-center {
     @apply flex justify-center items-center;

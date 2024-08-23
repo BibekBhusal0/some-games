@@ -6,7 +6,6 @@ export type history2048Type = {
   board: boardType;
   score: number;
   id: boardType;
-  idMap: Map<number, [number, number]>;
 };
 
 export const rotations: Record<directions, rotationType> = {
@@ -84,30 +83,21 @@ function merge_board(
 function rotate_board(board: boardType, angle: rotationType): boardType {
   switch (angle) {
     case 0:
-      return board;
+      return board.slice();
     case 90:
       return board[0].map((_, i) =>
-        board.map((row) => row[row.length - 1 - i])
+        board.slice().map((row) => row[row.length - 1 - i])
       );
     case 180:
       return board.map((row) => row.slice().reverse()).reverse();
     case 270:
-      return board[0].map((_, i) => board.map((row) => row[i]).reverse());
+      return board[0].map((_, i) =>
+        board
+          .slice()
+          .map((row) => row[i])
+          .reverse()
+      );
   }
-}
-
-export function createPositionMap(
-  board: boardType
-): Map<number, [number, number]> {
-  const positionMap = new Map<number, [number, number]>();
-  board.forEach((row, i) => {
-    row.forEach((cell, j) => {
-      if (cell !== undefined) {
-        positionMap.set(cell, [i, j]);
-      }
-    });
-  });
-  return positionMap;
 }
 
 export class TwentyFourtyEight {
@@ -117,14 +107,12 @@ export class TwentyFourtyEight {
   public gameOver: boolean = false;
   public score: number = 0;
   public size: number = 0;
-  public idMap: Map<number, [number, number]> = new Map();
 
   public history: history2048Type[] = [
     {
       score: this.score,
       id: this.id,
       board: this.board,
-      idMap: this.idMap,
     },
   ];
 
@@ -145,14 +133,11 @@ export class TwentyFourtyEight {
     this.score = 0;
     this.addRandom();
 
-    this.idMap = createPositionMap(this.id);
-
     this.history = [
       {
         score: this.score,
         id: this.id,
         board: this.board,
-        idMap: this.idMap,
       },
     ];
   }
@@ -199,7 +184,6 @@ export class TwentyFourtyEight {
       score: this.score,
       board: this.board,
       id: this.id,
-      idMap: this.idMap,
     });
   }
   public load_history(history: history2048Type[]) {
@@ -208,7 +192,6 @@ export class TwentyFourtyEight {
     this.score = game.score;
     this.board = game.board;
     this.id = game.id;
-    this.idMap = game.idMap;
     this.gameOver = this.checkGameOver();
   }
   public move(direction: directions) {
@@ -230,7 +213,6 @@ export class TwentyFourtyEight {
         this.gameOver = this.checkGameOver();
 
         this.addRandom();
-        this.idMap = createPositionMap(this.id);
 
         this.save_history();
       }
@@ -245,7 +227,6 @@ export class TwentyFourtyEight {
       const game = this.history[index];
       this.board = game.board;
       this.id = game.id;
-      this.idMap = game.idMap;
       this.score = game.score;
       this.gameOver = this.checkGameOver();
     }

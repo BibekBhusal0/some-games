@@ -4,15 +4,18 @@ import { motion } from "framer-motion";
 export default function ShinyButton({
   children,
   className = "",
+  onClick = () => {},
 }: {
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 }) {
   return (
     <button
       type="button"
+      onClick={onClick}
       className={cn(
-        "bg-neutral-200 dark:bg-neutral-600 relative rounded-full overflow-hidden group active:scale-95 transition-transform",
+        "bg-default-300 relative rounded-full overflow-hidden group active:scale-95 transition-transform",
         className,
         "p-0.5"
       )}>

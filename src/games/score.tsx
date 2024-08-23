@@ -1,11 +1,11 @@
 import { FaArrowLeft, FaUndo } from "react-icons/fa";
-import { Button } from "@nextui-org/button";
 import { Tooltip } from "@nextui-org/tooltip";
 import { cn } from "@/lib/utils";
 import { IoIosUndo } from "react-icons/io";
-import ShinyButton from "@/components/button";
 import { Link } from "@nextui-org/link";
 import { ReactNode } from "react";
+import { Button } from "@nextui-org/button";
+import HTPButton from "./how_to_play";
 
 export interface ScoreCardProps {
   score?: number;
@@ -27,11 +27,12 @@ function ScoreCard({
   onUndo = () => {},
   score_title = "score",
   best_title = "best",
+  helper = undefined,
 }: ScoreCardProps) {
   const score_class =
     "col-span-3 row-span-2 flex-col flex-center gap-1 uppercase bg-warning-50 text-lg font-semibold rounded-md";
-  const big_button = "col-span-4 h-full flex-center text-md capitalize";
-  const small_button = "col-span-2 h-full min-w-6 rounded-md text-md";
+  const big_button = "col-span-4 h-full flex-center text-lg capitalize";
+  const small_button = "col-span-2 h-full min-w-6 rounded-md text-xl";
 
   return (
     <div className="w-full grid gap-2 grid-cols-12 grid-rows-2 h-24 mb-3">
@@ -67,10 +68,7 @@ function ScoreCard({
 
       <Tooltip id="help" placement="bottom" content="How to Play">
         <div className={cn(small_button)}>
-          <ShinyButton
-            className={cn(small_button, "text-2xl w-full font-semibold")}>
-            ?
-          </ShinyButton>
+          <HTPButton helper={helper} className={small_button} />
         </div>
       </Tooltip>
     </div>
