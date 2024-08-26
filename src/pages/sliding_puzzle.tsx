@@ -28,7 +28,7 @@ function Puzzle() {
   }, game.win);
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col">
       <ScoreCard
         score={game.moves}
         score_title="Moves"

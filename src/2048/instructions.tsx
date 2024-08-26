@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import Board from "./board";
-import { boardType, directions } from "./logic";
+import { board2048Type, directions } from "@/types";
 import { ControlsKeys } from "@/components/kbd";
 import { FaHandPointer } from "react-icons/fa6";
 import { motion, TargetAndTransition } from "framer-motion";
+import { getEmptyBoard } from "./logic";
 
 const HowToMoveTiles = ({ type = "kbd" }: { type?: "kbd" | "mouse" }) => {
   const board_dim = 3;
-  const emptyBoard: boardType = Array(board_dim)
-    .fill(undefined)
-    .map(() => new Array(board_dim).fill(undefined));
+  const emptyBoard: board2048Type = getEmptyBoard(board_dim);
   const positions: { x: number; y: number; direction?: directions }[] = [
     { x: 0, y: 0 },
     { x: board_dim - 1, y: 0, direction: "right" },
@@ -65,13 +64,13 @@ const HowToMoveTiles = ({ type = "kbd" }: { type?: "kbd" | "mouse" }) => {
         y: [yMid, yMid],
       };
     }
-    mouseAnimation.transition = {
-      duration: 0.5,
-      type: "spring",
-      stiffness: 300,
-      damping: 20,
-    };
     mouseAnimation.opacity = [0, 1];
+    mouseAnimation.transition = {
+      duration: 0.13,
+      //   type: "spring",
+      //   stiffness: 300,
+      //   damping: 17,
+    };
   }
 
   return (
@@ -98,7 +97,11 @@ const HowToMoveTiles = ({ type = "kbd" }: { type?: "kbd" | "mouse" }) => {
 };
 
 const TileCombine = () => {
-  const boards: { board: boardType; id: boardType; key?: directions }[] = [
+  const boards: {
+    board: board2048Type;
+    id: board2048Type;
+    key?: directions;
+  }[] = [
     {
       board: [[4, undefined, 4, undefined]],
       id: [[1, undefined, 2, undefined]],
@@ -132,7 +135,7 @@ const TileCombine = () => {
   return (
     <div className="flex flex-col gap-5">
       <h2 className="text-2xl">Combine tiles with the same number</h2>
-      <div className="h-20 overflow-hidden rounded-b-md">
+      <div className="h-20 overflow-hidden rounded-b-md w-11/12 mx-auto">
         <Board board={boards[index].board} ids={boards[index].id} />
       </div>
       <div className="w-7/12 mx-auto">
@@ -149,5 +152,14 @@ export const instructions = [
   <ul className="flex flex-col text-left gap-3 ">
     <h2 className="text-2xl">Target is to make 2048</h2>
     <h2 className="text-2xl">Game is over when no moves are available</h2>
+    <div className="w-10/12 m-auto">
+      <Board
+        board={[
+          [2, 4, 8],
+          [8, 16, 2],
+          [32, 4, 8],
+        ]}
+      />
+    </div>
   </ul>,
 ];

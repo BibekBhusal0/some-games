@@ -1,12 +1,10 @@
-export type rowType = (number | undefined)[];
-export type boardType = rowType[];
-export type directions = "up" | "down" | "left" | "right";
-export type rotationType = 0 | 90 | 180 | 270;
-export type history2048Type = {
-  board: boardType;
-  score: number;
-  id: boardType;
-};
+import {
+  board2048Type,
+  directions,
+  history2048Type,
+  rotationType,
+  row2048Type,
+} from "@/types";
 
 export const rotations: Record<directions, rotationType> = {
   left: 0,
@@ -22,7 +20,16 @@ export const reverseRotations: Record<directions, rotationType> = {
   right: rotations.right,
 };
 
-export function are_changes_made(board: boardType, new_board: boardType) {
+export function getEmptyBoard(n: number): board2048Type {
+  return Array(n)
+    .fill(undefined)
+    .map(() => new Array(n).fill(undefined));
+}
+
+export function are_changes_made(
+  board: board2048Type,
+  new_board: board2048Type
+) {
   if (board === new_board) return false;
 
   if (board.length !== new_board.length) return true;
@@ -36,16 +43,19 @@ export function are_changes_made(board: boardType, new_board: boardType) {
   return false;
 }
 
-function move_empty_to_last(row: rowType, empty_val = undefined): rowType {
+function move_empty_to_last(
+  row: row2048Type,
+  empty_val = undefined
+): row2048Type {
   const non_zero = row.filter((cell) => cell !== empty_val);
   const zero_count = row.length - non_zero.length;
   return non_zero.concat(Array(zero_count).fill(empty_val));
 }
 
 function merge_row(
-  row: rowType,
-  id_row: rowType
-): [scoreIncrement: number, newRow: rowType, id_row: rowType] {
+  row: row2048Type,
+  id_row: row2048Type
+): [scoreIncrement: number, newRow: row2048Type, id_row: row2048Type] {
   let scoreIncrement = 0;
   const new_row = move_empty_to_last(row);
   const new_id_row = move_empty_to_last(id_row);
@@ -66,11 +76,15 @@ function merge_row(
 }
 
 function merge_board(
-  board: boardType,
-  id: boardType
-): [scoreIncrement: number, newBoard: boardType, new_id_row: boardType] {
+  board: board2048Type,
+  id: board2048Type
+): [
+  scoreIncrement: number,
+  newBoard: board2048Type,
+  new_id_row: board2048Type,
+] {
   let scoreIncrement = 0;
-  let ids: boardType | undefined = [];
+  let ids: board2048Type | undefined = [];
   const new_board = board.map((row, i) => {
     const [increment, newRow, new_id_row] = merge_row(row, id[i]);
     if (new_id_row) ids.push(new_id_row);
@@ -80,7 +94,10 @@ function merge_board(
   return [scoreIncrement, new_board, ids];
 }
 
-function rotate_board(board: boardType, angle: rotationType): boardType {
+function rotate_board(
+  board: board2048Type,
+  angle: rotationType
+): board2048Type {
   switch (angle) {
     case 0:
       return board.slice();
@@ -101,12 +118,13 @@ function rotate_board(board: boardType, angle: rotationType): boardType {
 }
 
 export class TwentyFourtyEight {
-  public id: boardType = [];
+  public id: board2048Type = [];
   private max_id = 0;
-  public board: boardType = [];
+  public board: board2048Type = [];
   public gameOver: boolean = false;
   public score: number = 0;
   public size: number = 0;
+  public win: boolean = false;
 
   public history: history2048Type[] = [
     {
@@ -121,14 +139,11 @@ export class TwentyFourtyEight {
   }
   public reset_board(size: number = this.size) {
     this.max_id = 0;
-    this.board = Array(size)
-      .fill(undefined)
-      .map(() => new Array(size).fill(undefined));
-    this.id = Array(size)
-      .fill(undefined)
-      .map(() => new Array(size).fill(undefined));
+    this.board = getEmptyBoard(size);
+    this.id = getEmptyBoard(size);
 
     this.size = size;
+    this.win = false;
     this.gameOver = false;
     this.score = 0;
     this.addRandom();
@@ -188,11 +203,17 @@ export class TwentyFourtyEight {
   }
   public load_history(history: history2048Type[]) {
     this.history = history;
+    if (this.history.length === 0) {
+      this.reset_board();
+      return;
+    }
     const game = this.history[this.history.length - 1];
     this.score = game.score;
     this.board = game.board;
     this.id = game.id;
+    this.max_id = Math.max(...this.id.flat().map((x) => x ?? 0)) + 1;
     this.gameOver = this.checkGameOver();
+    this.win = this.checkWin();
   }
   public move(direction: directions) {
     if (!this.gameOver) {
@@ -210,11 +231,16 @@ export class TwentyFourtyEight {
       if (changes_made) {
         this.board = new_board;
         this.id = new_id;
-        this.gameOver = this.checkGameOver();
 
         this.addRandom();
+        this.gameOver = this.checkGameOver();
+        this.win = this.checkWin();
 
-        this.save_history();
+        if (this.gameOver) {
+          this.history = [];
+        } else {
+          this.save_history();
+        }
       }
       return changes_made;
     }
@@ -230,6 +256,10 @@ export class TwentyFourtyEight {
       this.score = game.score;
       this.gameOver = this.checkGameOver();
     }
+  }
+
+  public checkWin() {
+    return JSON.stringify(this.board).includes("2048");
   }
   public checkGameOver() {
     for (let i = 0; i < this.board.length; i++) {

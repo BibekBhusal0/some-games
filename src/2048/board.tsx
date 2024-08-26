@@ -1,5 +1,5 @@
+import { board2048Type } from "@/types";
 import Tiles from "./tiles";
-import { boardType } from "./logic";
 
 const empty4x4 = [
   [undefined, undefined, undefined, undefined],
@@ -8,7 +8,7 @@ const empty4x4 = [
   [undefined, undefined, undefined, undefined],
 ];
 
-function flattenBoard(board: boardType, ids?: boardType) {
+function flattenBoard(board: board2048Type, ids?: board2048Type) {
   const flatBoard = [];
   const n_row = board[0].length;
 
@@ -33,8 +33,8 @@ function Board({
   board = empty4x4,
   ids,
 }: {
-  board?: boardType;
-  ids?: boardType;
+  board?: board2048Type;
+  ids?: board2048Type;
 }) {
   const rows = board[0].length;
   const flatBoard = flattenBoard(board, ids);

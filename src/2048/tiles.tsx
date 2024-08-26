@@ -82,10 +82,7 @@ function Tiles({
   return (
     <>
       <motion.div
-        className={cn(
-          common_class,
-          "absolute flex-center drop-shadow-2xl font-semibold z-10"
-        )}
+        className={cn(common_class, "absolute flex-center font-semibold z-10")}
         style={{
           ...tileColor,
           fontSize: getFontSize(number, rows),

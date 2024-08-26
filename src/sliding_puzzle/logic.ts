@@ -1,10 +1,8 @@
-import { directions } from "@/2048/logic";
-
-export type sliding_puzzle_type = number[];
-export type sliding_puzzle_history = {
-  moves: number;
-  board: sliding_puzzle_type;
-};
+import {
+  directions,
+  sliding_puzzle_history,
+  sliding_puzzle_type,
+} from "@/types";
 
 export default class SlidingPuzzle {
   public board: sliding_puzzle_type = [];

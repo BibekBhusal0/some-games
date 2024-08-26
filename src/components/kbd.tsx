@@ -1,4 +1,4 @@
-import { directions } from "@/2048/logic";
+import { directions } from "@/types";
 import { cn } from "@/lib/utils";
 import {
   FaArrowDown,

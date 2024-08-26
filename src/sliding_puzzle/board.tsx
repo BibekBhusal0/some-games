@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { sliding_puzzle_type } from "./logic";
+import { sliding_puzzle_type } from "@/types";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 

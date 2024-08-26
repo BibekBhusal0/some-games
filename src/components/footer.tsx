@@ -18,7 +18,7 @@ export const Footer = () => {
     },
   ];
   return (
-    <div className="w-full flex gap-2 justify-between px-3 items-center mt-4">
+    <div className="w-full flex gap-2 justify-between px-3 items-center absolute bottom-4 left-0">
       <ThemeSwitch />
       <div className="flex justify-evenly gap-4">
         {links.map(({ name, link, icon }) => (
