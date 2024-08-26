@@ -1,4 +1,4 @@
-import { directions } from "@/2048/logic";
+import { directions } from "@/types";
 import { useEffect } from "react";
 
 function useSwipe(callback: (direction: directions) => void, disabled = false) {

@@ -1,6 +1,6 @@
-import { directions } from "@/2048/logic";
 import useSwipe from "./use-swipe";
 import useKeyboardControls from "./use-kbd";
+import { directions } from "@/types";
 
 function useControls(
   callback: (direction: directions) => void,
