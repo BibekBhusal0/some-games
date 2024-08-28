@@ -17,8 +17,8 @@ function SelectionTemplate({
   continue_variation?: string;
 }) {
   return (
-    <div className="flex-center  flex-col px-2 gap-3">
-      <div className="flex justify-between w-full gap-4 items-center ">
+    <div className="flex-center flex-col px-2 gap-3">
+      <div className="flex justify-between w-full gap-4 items-center">
         <Button as={Link} href="/" className="text-xl">
           <FaArrowLeft />
           Back

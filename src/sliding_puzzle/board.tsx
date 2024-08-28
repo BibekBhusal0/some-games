@@ -7,16 +7,19 @@ function Board({
   board,
   size,
   imageUrl = undefined,
+  animate = true,
 }: {
   board: sliding_puzzle_type;
   size: number;
   imageUrl?: string;
+  animate?: boolean;
 }) {
   const cellSize = 100 / size;
-  const [animationParent] = useAutoAnimate({
+  const [animationParent, enableAnimations] = useAutoAnimate({
     duration: 100,
     easing: "ease-in-out",
   });
+  enableAnimations(animate);
   return (
     <div
       ref={animationParent}
@@ -27,7 +30,7 @@ function Board({
       {board.map((cell) => (
         <div
           className={cn("w-full aspect-square flex-center text-center", {
-            "bg-danger-700 text-success-200  cursor-pointer relative":
+            "bg-success-700 text-secondary-100  cursor-pointer relative":
               cell !== 0,
           })}
           style={
@@ -51,7 +54,7 @@ function Board({
                 "top-0 left-0 absolute aspect-square",
                 imageUrl
                   ? "bg-danger-900 rounded-full text-md font-semibold mt-1 ml-2 w-6"
-                  : "w-full flex-center text-4xl "
+                  : "w-full flex-center text-4xl font-bold"
               )}>
               {cell}
             </div>

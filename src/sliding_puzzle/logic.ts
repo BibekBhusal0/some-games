@@ -1,8 +1,16 @@
 import {
+  difficultyType,
   directions,
   sliding_puzzle_history,
   sliding_puzzle_type,
+  sliding_puzzle_variations_obj,
 } from "@/types";
+
+export const difficultyRow: Record<difficultyType, number> = {
+  easy: 3,
+  medium: 4,
+  hard: 5,
+};
 
 export default class SlidingPuzzle {
   public board: sliding_puzzle_type = [];
@@ -10,6 +18,10 @@ export default class SlidingPuzzle {
   public moves: number = 0;
   public size: number = 0;
   public win: boolean = false;
+  public variant: sliding_puzzle_variations_obj = {
+    type: "image",
+    difficulty: "easy",
+  };
 
   public history: sliding_puzzle_history[] = [
     {
@@ -17,21 +29,31 @@ export default class SlidingPuzzle {
       board: [...this.board],
     },
   ];
-  constructor(size: number = 4) {
-    this.reset(size);
+  constructor(
+    varaintion: sliding_puzzle_variations_obj = {
+      type: "image",
+      difficulty: "easy",
+    },
+    shuffle = true
+  ) {
+    this.variant = varaintion;
+    this.size = difficultyRow[varaintion.difficulty];
+
+    this.reset(shuffle);
   }
-  public reset(size: number = this.size) {
-    this.size = size;
+  public reset(shuffle = true) {
     this.moves = 0;
     this.win = false;
-    this.board = Array(size * size)
+    this.board = Array(this.size * this.size)
       .fill(1)
       .map((_, i) => i + 1);
 
-    this.board[size * size - 1] = 0;
+    this.board[this.size * this.size - 1] = 0;
     this.win_board = [...this.board];
 
-    this.shuffle(size * 10);
+    if (shuffle) {
+      this.shuffle(this.size * 20);
+    }
     this.history = [
       {
         moves: this.moves,
@@ -73,7 +95,7 @@ export default class SlidingPuzzle {
     }
     console.log("-------------");
   }
-  private shuffle(turns: number = 20) {
+  public shuffle(turns: number = this.size * 20) {
     let prev: directions | null = null;
     const moves: Record<directions, directions> = {
       right: "left",
@@ -97,6 +119,8 @@ export default class SlidingPuzzle {
         prev = currMove;
       }
     }
+    this.moves = 0;
+    this.win = false;
   }
   private save_history() {
     if (this.history.length > 10) {

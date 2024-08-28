@@ -6,11 +6,11 @@ import React, {
   useEffect,
 } from "react";
 import { gameReducer, initialState } from "./reducer";
-import { GameAction, Games, stateType } from "@/types/reducer";
+import { GameAction, stateType } from "@/types/reducer";
 
 type GameContextType = {
   state: stateType;
-  dispatch: React.Dispatch<GameAction<Games>>;
+  dispatch: React.Dispatch<GameAction>;
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);

@@ -1,12 +1,6 @@
 import { board2048Type } from "@/types";
 import Tiles from "./tiles";
-
-const empty4x4 = [
-  [undefined, undefined, undefined, undefined],
-  [undefined, undefined, undefined, undefined],
-  [undefined, undefined, undefined, undefined],
-  [undefined, undefined, undefined, undefined],
-];
+import { getEmptyBoard } from "./logic";
 
 function flattenBoard(board: board2048Type, ids?: board2048Type) {
   const flatBoard = [];
@@ -16,9 +10,10 @@ function flattenBoard(board: board2048Type, ids?: board2048Type) {
     for (let j = 0; j < n_row; j++) {
       const cell = board[i][j];
       const id = ids?.[i]?.[j];
-
+      var cell_id = id === undefined || id === 0 ? `${i}-${j}` : id;
       flatBoard.push({
-        id: id ?? `${i}-${j}`,
+        // id: id ?? `${i}-${j}`,
+        id: cell_id,
         number: cell,
         x: j,
         y: i,
@@ -30,7 +25,7 @@ function flattenBoard(board: board2048Type, ids?: board2048Type) {
 }
 
 function Board({
-  board = empty4x4,
+  board = getEmptyBoard(4),
   ids,
 }: {
   board?: board2048Type;

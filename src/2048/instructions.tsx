@@ -103,22 +103,22 @@ const TileCombine = () => {
     key?: directions;
   }[] = [
     {
-      board: [[4, undefined, 4, undefined]],
-      id: [[1, undefined, 2, undefined]],
+      board: [[4, 0, 4, 0]],
+      id: [[1, 0, 2, 0]],
     },
     {
-      board: [[8, undefined, undefined, 8]],
-      id: [[2, undefined, undefined, 3]],
+      board: [[8, 0, 0, 8]],
+      id: [[2, 0, 0, 3]],
       key: "left",
     },
     {
-      board: [[16, undefined, 16, undefined]],
-      id: [[3, undefined, 4, undefined]],
+      board: [[16, 0, 16, 0]],
+      id: [[3, 0, 4, 0]],
       key: "left",
     },
     {
-      board: [[undefined, undefined, undefined, 32]],
-      id: [[undefined, undefined, undefined, 3]],
+      board: [[0, 0, 0, 32]],
+      id: [[0, 0, 0, 3]],
       key: "right",
     },
   ];

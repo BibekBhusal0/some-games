@@ -1,5 +1,5 @@
 import Board from "@/2048/board";
-import Game from "@/2048/game";
+import TwentyForutyEightGame from "@/2048/game";
 import { getEmptyBoard, TwentyFourtyEight } from "@/2048/logic";
 import { useGameContext } from "@/games/provider";
 import SelectionTemplate from "@/games/selection_template";
@@ -7,17 +7,27 @@ import { variants2048 } from "@/types";
 import { Slider } from "@nextui-org/slider";
 import { useState } from "react";
 
-function Game2048() {
+export default function Page2048() {
   const [selecting, setSelecting] = useState(true);
   const [n, setN] = useState(4);
   const [game, setGame] = useState(new TwentyFourtyEight(n));
   const emptyBoard = getEmptyBoard(n);
 
   const { state } = useGameContext();
-  const test = state.history["2048"];
+  const variants_history = state.history["2048"] || {};
 
-  const hasKeys = test !== undefined && Object.keys(test).length > 0;
-  const firstKey = hasKeys ? Object.keys(test)[0] : undefined;
+  const hasKeys = Object.keys(variants_history).length > 0;
+  const firstKey = hasKeys ? Object.keys(variants_history)[0] : undefined;
+
+  const contineuAction = () => {
+    if (variants_history && firstKey) {
+      const history = variants_history[firstKey as variants2048];
+      if (history) {
+        game.load_history(history);
+        setSelecting(false);
+      }
+    }
+  };
 
   return (
     <>
@@ -25,15 +35,7 @@ function Game2048() {
         <SelectionTemplate
           select_text="Select Size"
           setSelecting={setSelecting}
-          continue_action={() => {
-            if (test && firstKey) {
-              const history = test[firstKey as variants2048];
-              if (history) {
-                game.load_history(history);
-                setSelecting(false);
-              }
-            }
-          }}
+          continue_action={contineuAction}
           continue_variation={firstKey}>
           <div className="w-10/12">
             <Board board={emptyBoard}></Board>
@@ -55,10 +57,8 @@ function Game2048() {
           />
         </SelectionTemplate>
       ) : (
-        <Game game_={game} />
+        <TwentyForutyEightGame game_={game} />
       )}
     </>
   );
 }
-
-export default Game2048;

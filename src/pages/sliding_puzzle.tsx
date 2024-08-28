@@ -1,50 +1,69 @@
-import Board from "@/sliding_puzzle/board";
-import ScoreCard from "@/games/score";
-import { useEffect, useState } from "react";
+import { useGameContext } from "@/games/provider";
+import SelectionTemplate from "@/games/selection_template";
+import SlidingPuzzleGame from "@/sliding_puzzle/game";
 import SlidingPuzzle from "@/sliding_puzzle/logic";
-import useControls from "@/hooks/use-controls";
+import {
+  difficulties,
+  difficultyType,
+  sliding_puzzle_variations_obj,
+  sliding_puzzle_variations_str,
+  SPvarioationStr2Obj,
+} from "@/types";
+import { useState } from "react";
+import DifficultySelector from "@/components/difficulty_selector";
 
-const imageUrl = "/sliding_puzzle/bird.jpg";
+export default function PageSlidingPuzzle() {
+  const [selecting, setSelecting] = useState(true);
+  const [variation, setVariation] = useState<sliding_puzzle_variations_obj>({
+    type: "image",
+    difficulty: "easy",
+  });
+  const [game, setGame] = useState(new SlidingPuzzle(variation, false));
 
-function Puzzle() {
-  const [game, setGame] = useState(new SlidingPuzzle(3));
-  const [board, setBoard] = useState(game.board);
+  const { state } = useGameContext();
+  const variants_history = state.history["slidingPuzzle"] || {};
 
-  useEffect(() => {
-    if (game.win) {
-      console.log("you win");
+  const hasKeys = Object.keys(variants_history).length > 0;
+  const firstKey = hasKeys ? Object.keys(variants_history)[0] : undefined;
+  const label = firstKey
+    ? SPvarioationStr2Obj(firstKey as sliding_puzzle_variations_str).difficulty
+    : undefined;
+
+  const continue_action = () => {
+    if (variants_history && firstKey) {
+      const history =
+        variants_history[firstKey as sliding_puzzle_variations_str];
+      if (history) {
+        game.load_history(history);
+        setSelecting(false);
+      }
     }
-  }, [game.win]);
-
-  const reRender = () => {
-    setGame(game);
-    const b = [...game.board];
-    setBoard(b);
   };
-  useControls((key) => {
-    if (game.move(key)) {
-      reRender();
-    }
-  }, game.win);
+  const handleDifficultyChange = (e: difficultyType) => {
+    setVariation({ ...variation, difficulty: e });
+    setGame(new SlidingPuzzle({ ...variation, difficulty: e }));
+  };
 
   return (
-    <div className="flex flex-col">
-      <ScoreCard
-        score={game.moves}
-        score_title="Moves"
-        best_title="Fastest"
-        onUndo={() => {
-          game.undo();
-          reRender();
-        }}
-        onReset={() => {
-          game.reset();
-          reRender();
-        }}
-      />
-      <Board size={game.size} board={board} imageUrl={imageUrl} />
-    </div>
+    <>
+      {selecting ? (
+        <SelectionTemplate
+          select_text="Select Game"
+          setSelecting={() => {
+            game.shuffle();
+            setSelecting(false);
+          }}
+          continue_action={continue_action}
+          continue_variation={label}>
+          <DifficultySelector
+            selectedDifficulty={variation.difficulty}
+            labels={difficulties}
+            onDifficultyChange={handleDifficultyChange}
+          />
+        </SelectionTemplate>
+      ) : (
+        <SlidingPuzzleGame game_={game} />
+      )}
+    </>
   );
 }
-
-export default Puzzle;

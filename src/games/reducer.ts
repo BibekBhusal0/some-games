@@ -1,13 +1,13 @@
-import { GameAction, Games, stateType } from "@/types/reducer";
+import { GameAction, stateType } from "@/types/reducer";
 
 export const initialState: stateType = {
   history: {},
   high_score: {},
 };
 
-export function gameReducer<T extends Games>(
+export function gameReducer(
   state = initialState,
-  action: GameAction<T>
+  action: GameAction
 ): stateType {
   switch (action.type) {
     case "SET_HISTORY": {
@@ -59,12 +59,24 @@ export function gameReducer<T extends Games>(
       return state;
   }
 }
-
-function replace(_: any, value: any) {
-  return value === undefined ? "__undefined__" : value;
+function replace(_: any, value: any): any {
+  if (value === undefined) {
+    return "__undefined__";
+  }
+  if (Array.isArray(value)) {
+    return value.map((v) => replace(_, v));
+  }
+  return value;
 }
-function review(_: any, value: any) {
-  return value === "__undefined__" ? undefined : value;
+
+function review(_: any, value: any): any {
+  if (value === "__undefined__") {
+    return undefined;
+  }
+  if (Array.isArray(value)) {
+    return value.map((v) => review(_, v));
+  }
+  return value;
 }
 
 function setLocalStorage(data: any, variable: "history" | "highScore") {

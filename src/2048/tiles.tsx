@@ -25,12 +25,12 @@ function getFontSize(number: number, rows: number): string {
 }
 
 function Tiles({
-  number = undefined,
+  number = 0,
   x,
   y,
   rows = 4,
 }: {
-  number?: number;
+  number: number;
   rows?: number;
   x: number;
   y: number;
@@ -43,21 +43,19 @@ function Tiles({
   const top = getCoor(y);
   const left = getCoor(x);
 
-  const prevState = useRef<{ n?: number; top?: string }>({
-    n: undefined,
+  const prevState = useRef<{ n: number; top?: string }>({
+    n: 0,
     top: undefined,
   });
   useEffect(() => {
-    if (prevState.current.n !== number && number !== undefined) {
+    if (prevState.current.n !== number && number !== 0) {
       prevState.current.n = number;
     }
     prevState.current.top = top;
   }, [number, top, prevState]);
 
   const merged =
-    number !== undefined &&
-    prevState.current.n !== undefined &&
-    number !== prevState.current.n;
+    number !== 0 && prevState.current.n !== 0 && number !== prevState.current.n;
   const prevTop = prevState.current.top;
   const width = `calc(${tileSize}% - ${padding}px)`;
 

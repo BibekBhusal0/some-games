@@ -1,35 +1,55 @@
 import Board from "@/2048/board";
 import { instructions } from "@/2048/instructions";
 import { TwentyFourtyEight } from "@/2048/logic";
+import TerminationDilouge from "@/components/termination-dilauge";
 import { useGameContext } from "@/games/provider";
 import ScoreCard from "@/games/score";
 import useControls from "@/hooks/use-controls";
 import { variants2048Mapping } from "@/types";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function Game({
+export default function TwentyForutyEightGame({
   game_ = new TwentyFourtyEight(4),
 }: {
   game_?: TwentyFourtyEight;
 }) {
-  const [game, setGame] = useState(game_);
+  const [game] = useState(game_);
   const [board, setBoard] = useState(game.board);
   const n_row = game.size;
+  const {
+    dispatch,
+    state: { high_score },
+  } = useGameContext();
+  const prevWin = useRef(true);
+  const [showWin, setShowWin] = useState(false);
+
+  const game_hs = high_score["2048"]?.[variants2048Mapping[n_row]] ?? 0;
+
+  useEffect(() => {
+    if (prevWin.current !== game.win && game.win) {
+      setShowWin(true);
+    } else {
+      setShowWin(false);
+    }
+    prevWin.current = game.win;
+  }, [game, board]);
 
   const reRender = () => {
-    setGame(game);
+    dispatch({
+      type: "SET_HISTORY",
+      game: "2048",
+      variant: variants2048Mapping[n_row],
+      history: game.history,
+    });
 
-    if (game.gameOver) {
-      dispatch({ type: "EMPTY_HISTORY", game: "2048" });
-    } else {
+    if (game.score > game_hs) {
       dispatch({
-        type: "SET_HISTORY",
+        type: "SET_HIGH_SCORE",
         game: "2048",
         variant: variants2048Mapping[n_row],
-        history: game.history,
+        score: game.score,
       });
     }
-
     setBoard(game.board);
   };
 
@@ -38,23 +58,47 @@ export default function Game({
       reRender();
     }
   });
-  const { dispatch } = useGameContext();
+  const reset = () => {
+    game.reset_board();
+    reRender();
+  };
+
+  const undo = () => {
+    game.undo();
+    reRender();
+  };
 
   return (
     <>
       <ScoreCard
         score={game.score}
-        onReset={() => {
-          game.reset_board();
-          reRender();
-        }}
-        onUndo={() => {
-          game.undo();
-          reRender();
-        }}
+        onReset={reset}
+        onUndo={undo}
         helper={instructions}
+        undo_disabled={game.history.length <= 1}
+        best={game_hs}
       />
       <Board board={board} ids={game.id} />
+      {showWin && (
+        <TerminationDilouge
+          title="You Win"
+          buttons={[
+            { onPress: reset, children: "New Game Again" },
+            { onPress: undo, children: "Undo" },
+          ]}
+        />
+      )}
+      {game.gameOver && (
+        <TerminationDilouge
+          title="Game Over"
+          buttons={[
+            {
+              onPress: reset,
+              children: "New Game",
+            },
+            { onPress: undo, children: "undo" },
+          ]}></TerminationDilouge>
+      )}
     </>
   );
 }

@@ -22,8 +22,8 @@ export const reverseRotations: Record<directions, rotationType> = {
 
 export function getEmptyBoard(n: number): board2048Type {
   return Array(n)
-    .fill(undefined)
-    .map(() => new Array(n).fill(undefined));
+    .fill(0)
+    .map(() => new Array(n).fill(0));
 }
 
 export function are_changes_made(
@@ -43,10 +43,7 @@ export function are_changes_made(
   return false;
 }
 
-function move_empty_to_last(
-  row: row2048Type,
-  empty_val = undefined
-): row2048Type {
+function move_empty_to_last(row: row2048Type, empty_val = 0): row2048Type {
   const non_zero = row.filter((cell) => cell !== empty_val);
   const zero_count = row.length - non_zero.length;
   return non_zero.concat(Array(zero_count).fill(empty_val));
@@ -60,12 +57,12 @@ function merge_row(
   const new_row = move_empty_to_last(row);
   const new_id_row = move_empty_to_last(id_row);
   for (let i = 0; i < new_row.length - 1; i++) {
-    if (new_row[i] !== undefined && new_row[i] === new_row[i + 1]) {
+    if (new_row[i] !== 0 && new_row[i] === new_row[i + 1]) {
       scoreIncrement += new_row[i]! * 2;
       new_row[i] = new_row[i]! * 2;
-      new_row[i + 1] = undefined;
+      new_row[i + 1] = 0;
       new_id_row[i] = new_id_row[i + 1];
-      new_id_row[i + 1] = undefined;
+      new_id_row[i + 1] = 0;
     }
   }
   return [
@@ -84,7 +81,7 @@ function merge_board(
   new_id_row: board2048Type,
 ] {
   let scoreIncrement = 0;
-  let ids: board2048Type | undefined = [];
+  let ids: board2048Type | 0 = [];
   const new_board = board.map((row, i) => {
     const [increment, newRow, new_id_row] = merge_row(row, id[i]);
     if (new_id_row) ids.push(new_id_row);
@@ -156,16 +153,16 @@ export class TwentyFourtyEight {
       },
     ];
   }
-  public getAllEmpty() {
+  private getAllEmpty() {
     const empty: [number, number][] = [];
     this.board.forEach((row, i) => {
       row.forEach((cell, j) => {
-        if (cell === undefined) empty.push([i, j]);
+        if (cell === 0) empty.push([i, j]);
       });
     });
     return empty;
   }
-  public addRandom() {
+  private addRandom() {
     const empty: [number, number][] = this.getAllEmpty();
     if (empty.length === 0) return;
     const index = Math.floor(Math.random() * empty.length);
@@ -181,7 +178,7 @@ export class TwentyFourtyEight {
       let row = "";
       for (let j = 0; j < board[i].length; j++) {
         const cell = board[i][j];
-        if (cell === undefined) {
+        if (cell === 0) {
           row += "_";
         } else {
           row += cell.toString();
@@ -210,6 +207,7 @@ export class TwentyFourtyEight {
     const game = this.history[this.history.length - 1];
     this.score = game.score;
     this.board = game.board;
+    this.size = this.board[0].length;
     this.id = game.id;
     this.max_id = Math.max(...this.id.flat().map((x) => x ?? 0)) + 1;
     this.gameOver = this.checkGameOver();
@@ -236,11 +234,7 @@ export class TwentyFourtyEight {
         this.gameOver = this.checkGameOver();
         this.win = this.checkWin();
 
-        if (this.gameOver) {
-          this.history = [];
-        } else {
-          this.save_history();
-        }
+        this.save_history();
       }
       return changes_made;
     }
@@ -256,6 +250,7 @@ export class TwentyFourtyEight {
       this.score = game.score;
       this.gameOver = this.checkGameOver();
     }
+    this.win = this.checkWin();
   }
 
   public checkWin() {
