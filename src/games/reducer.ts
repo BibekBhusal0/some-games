@@ -60,23 +60,11 @@ export function gameReducer(
   }
 }
 function replace(_: any, value: any): any {
-  if (value === undefined) {
-    return "__undefined__";
-  }
-  if (Array.isArray(value)) {
-    return value.map((v) => replace(_, v));
-  }
-  return value;
+  return value === undefined ? "__undefined__" : value;
 }
 
 function review(_: any, value: any): any {
-  if (value === "__undefined__") {
-    return undefined;
-  }
-  if (Array.isArray(value)) {
-    return value.map((v) => review(_, v));
-  }
-  return value;
+  return value === "__undefined__" ? undefined : value;
 }
 
 function setLocalStorage(data: any, variable: "history" | "highScore") {

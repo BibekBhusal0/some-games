@@ -62,6 +62,63 @@ export type sliding_puzzle_history = {
 };
 
 export type SlidingPuzzleGameProps = {
-  game_?: SlidingPuzzle;
+  game?: SlidingPuzzle;
   imageUrl?: string;
 };
+
+// memory card
+export type MemoryCardCardType = {
+  flipped: boolean;
+  solved: boolean;
+  number: number;
+};
+
+export type MemoryCardType = MemoryCardCardType[];
+
+const I_N = [
+  "brush",
+  "bucket",
+  "camera",
+  "chess",
+  "clock",
+  "colour-palette",
+  "crown",
+  "cup",
+  "fire",
+  "gift",
+  "glass",
+  "gym",
+  "headphone",
+  "heart",
+  "key",
+  "lab",
+  "link",
+  "location",
+  "lock",
+  "magic-trick",
+  "music",
+  "notebook",
+  "painting-brush",
+  "painting-kit",
+  "pencil",
+  "rocket",
+  "star",
+  "target",
+  "thumb-up",
+  "trophy",
+  "video-cam",
+] as const;
+export type images_name_type = (typeof I_N)[number];
+export const images_name: images_name_type[] = [...I_N];
+
+const I_V = ["premium", "gradient", "color"] as const;
+export type images_variation_type = (typeof I_V)[number];
+export const images_variation: images_variation_type[] = [...I_V];
+export type images_mapping_type = Record<number, images_name_type>;
+export interface MemoryCardStateType {
+  difficulty: difficultyType;
+  cards: MemoryCardType;
+  turns: number;
+  images_mapping: images_mapping_type;
+  images_variant: images_variation_type;
+}

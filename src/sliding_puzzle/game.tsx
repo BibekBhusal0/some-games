@@ -5,13 +5,12 @@ import ScoreCard from "@/games/score";
 import useControls from "@/hooks/use-controls";
 import { SlidingPuzzleGameProps, SPvarioationObj2Str } from "@/types";
 import { useGameContext } from "@/games/provider";
-import TerminationDilouge from "@/components/termination-dilauge";
+import TerminationDialog from "@/components/termination-dialog";
 
 export default function SlidingPuzzleGame({
-  game_ = new SlidingPuzzle(),
+  game = new SlidingPuzzle(),
   imageUrl = undefined,
 }: SlidingPuzzleGameProps) {
-  const [game] = useState(game_);
   const [board, setBoard] = useState(game.board);
   const {
     dispatch,
@@ -74,7 +73,7 @@ export default function SlidingPuzzleGame({
       />
       <Board size={game.size} board={board} imageUrl={imageUrl} />
       {game.win && (
-        <TerminationDilouge
+        <TerminationDialog
           title="You Win"
           buttons={[{ onPress: reset, children: "Play Again" }]}
         />

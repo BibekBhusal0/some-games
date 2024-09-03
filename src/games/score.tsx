@@ -17,6 +17,8 @@ export interface ScoreCardProps {
   onReset?: () => void;
   onUndo?: () => void;
   undo_disabled?: boolean;
+  undo_text?: string;
+  undo_icon?: ReactNode;
 
   helper?: ReactNode[];
 }
@@ -27,6 +29,8 @@ function ScoreCard({
   onReset = () => {},
   onUndo = () => {},
   undo_disabled = false,
+  undo_text = "Undo",
+  undo_icon = <IoIosUndo />,
   score_title = "score",
   best_title = "best",
   helper = undefined,
@@ -65,8 +69,8 @@ function ScoreCard({
         id="undo"
         isDisabled={undo_disabled}
         className={cn(big_button, "bg-default-400")}>
-        <IoIosUndo />
-        <div>Undo</div>
+        {undo_icon}
+        <div>{undo_text}</div>
       </Button>
 
       <Tooltip id="help" placement="bottom" content="How to Play">

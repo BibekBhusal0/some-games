@@ -114,7 +114,7 @@ function rotate_board(
   }
 }
 
-export class TwentyFourtyEight {
+export class TwentyFortyEight {
   public id: board2048Type = [];
   private max_id = 0;
   public board: board2048Type = [];

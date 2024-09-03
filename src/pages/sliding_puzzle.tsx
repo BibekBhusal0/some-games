@@ -18,7 +18,7 @@ export default function PageSlidingPuzzle() {
     type: "image",
     difficulty: "easy",
   });
-  const [game, setGame] = useState(new SlidingPuzzle(variation, false));
+  const [game, setGame] = useState(new SlidingPuzzle(variation));
 
   const { state } = useGameContext();
   const variants_history = state.history["slidingPuzzle"] || {};
@@ -62,7 +62,7 @@ export default function PageSlidingPuzzle() {
           />
         </SelectionTemplate>
       ) : (
-        <SlidingPuzzleGame game_={game} />
+        <SlidingPuzzleGame game={game} />
       )}
     </>
   );

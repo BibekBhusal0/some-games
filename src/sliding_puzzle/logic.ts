@@ -33,17 +33,15 @@ export default class SlidingPuzzle {
     varaintion: sliding_puzzle_variations_obj = {
       type: "image",
       difficulty: "easy",
-    },
-    shuffle = true
+    }
   ) {
     this.variant = varaintion;
     this.size = difficultyRow[varaintion.difficulty];
 
-    this.reset(shuffle);
+    this.reset();
   }
-  public reset(shuffle = true) {
-    this.moves = 0;
-    this.win = false;
+
+  public reset() {
     this.board = Array(this.size * this.size)
       .fill(1)
       .map((_, i) => i + 1);
@@ -51,15 +49,7 @@ export default class SlidingPuzzle {
     this.board[this.size * this.size - 1] = 0;
     this.win_board = [...this.board];
 
-    if (shuffle) {
-      this.shuffle(this.size * 20);
-    }
-    this.history = [
-      {
-        moves: this.moves,
-        board: [...this.board],
-      },
-    ];
+    this.shuffle(this.size * 20);
   }
   private is_valid_move(
     direction: directions,
@@ -121,15 +111,19 @@ export default class SlidingPuzzle {
     }
     this.moves = 0;
     this.win = false;
+    this.history = [
+      {
+        moves: 0,
+        board: [...this.board],
+      },
+    ];
   }
   private save_history() {
     if (this.history.length > 10) {
       this.history.shift();
     }
-    this.history.push({
-      moves: this.moves,
-      board: [...this.board],
-    });
+
+    this.history.push({ moves: this.moves, board: [...this.board] });
   }
   public load_history(history: sliding_puzzle_history[]) {
     this.history = history;
@@ -167,8 +161,8 @@ export default class SlidingPuzzle {
     if (this.history.length > 1) {
       this.history.pop();
       const index = this.history.length - 1;
-      const game = this.history[index];
-      this.board = game.board;
+      const game = { ...this.history[index] };
+      this.board = [...game.board];
       this.moves = game.moves;
     }
   }

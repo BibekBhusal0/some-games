@@ -12,7 +12,6 @@ function flattenBoard(board: board2048Type, ids?: board2048Type) {
       const id = ids?.[i]?.[j];
       var cell_id = id === undefined || id === 0 ? `${i}-${j}` : id;
       flatBoard.push({
-        // id: id ?? `${i}-${j}`,
         id: cell_id,
         number: cell,
         x: j,

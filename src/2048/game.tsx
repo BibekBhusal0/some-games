@@ -1,19 +1,18 @@
 import Board from "@/2048/board";
 import { instructions } from "@/2048/instructions";
-import { TwentyFourtyEight } from "@/2048/logic";
-import TerminationDilouge from "@/components/termination-dilauge";
+import { TwentyFortyEight } from "@/2048/logic";
+import TerminationDialog from "@/components/termination-dialog";
 import { useGameContext } from "@/games/provider";
 import ScoreCard from "@/games/score";
 import useControls from "@/hooks/use-controls";
 import { variants2048Mapping } from "@/types";
 import { useEffect, useRef, useState } from "react";
 
-export default function TwentyForutyEightGame({
-  game_ = new TwentyFourtyEight(4),
+export default function TwentyFortyEightGame({
+  game = new TwentyFortyEight(4),
 }: {
-  game_?: TwentyFourtyEight;
+  game?: TwentyFortyEight;
 }) {
-  const [game] = useState(game_);
   const [board, setBoard] = useState(game.board);
   const n_row = game.size;
   const {
@@ -80,7 +79,7 @@ export default function TwentyForutyEightGame({
       />
       <Board board={board} ids={game.id} />
       {showWin && (
-        <TerminationDilouge
+        <TerminationDialog
           title="You Win"
           buttons={[
             { onPress: reset, children: "New Game Again" },
@@ -89,7 +88,7 @@ export default function TwentyForutyEightGame({
         />
       )}
       {game.gameOver && (
-        <TerminationDilouge
+        <TerminationDialog
           title="Game Over"
           buttons={[
             {
@@ -97,7 +96,7 @@ export default function TwentyForutyEightGame({
               children: "New Game",
             },
             { onPress: undo, children: "undo" },
-          ]}></TerminationDilouge>
+          ]}></TerminationDialog>
       )}
     </>
   );

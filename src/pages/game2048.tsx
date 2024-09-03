@@ -1,6 +1,6 @@
 import Board from "@/2048/board";
-import TwentyForutyEightGame from "@/2048/game";
-import { getEmptyBoard, TwentyFourtyEight } from "@/2048/logic";
+import TwentyFortyEightGame from "@/2048/game";
+import { getEmptyBoard, TwentyFortyEight } from "@/2048/logic";
 import { useGameContext } from "@/games/provider";
 import SelectionTemplate from "@/games/selection_template";
 import { variants2048 } from "@/types";
@@ -10,7 +10,7 @@ import { useState } from "react";
 export default function Page2048() {
   const [selecting, setSelecting] = useState(true);
   const [n, setN] = useState(4);
-  const [game, setGame] = useState(new TwentyFourtyEight(n));
+  const [game, setGame] = useState(new TwentyFortyEight(n));
   const emptyBoard = getEmptyBoard(n);
 
   const { state } = useGameContext();
@@ -52,12 +52,12 @@ export default function Page2048() {
             value={n}
             onChange={(e) => {
               setN(e as number);
-              setGame(new TwentyFourtyEight(e as number));
+              setGame(new TwentyFortyEight(e as number));
             }}
           />
         </SelectionTemplate>
       ) : (
-        <TwentyForutyEightGame game_={game} />
+        <TwentyFortyEightGame game={game} />
       )}
     </>
   );

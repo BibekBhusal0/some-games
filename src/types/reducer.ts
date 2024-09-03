@@ -1,22 +1,26 @@
 import {
+  difficultyType,
   history2048Type,
+  MemoryCardStateType,
   sliding_puzzle_history,
   sliding_puzzle_variations_str,
   variants2048,
 } from ".";
 
-export type Games = "2048" | "slidingPuzzle" | "wordle";
+export type Games = "2048" | "slidingPuzzle" | "wordle" | "memoryCard";
 
 export type VariantMap = {
   "2048": variants2048;
   slidingPuzzle: sliding_puzzle_variations_str;
-  wordle: "easy" | "hard";
+  wordle: difficultyType;
+  memoryCard: difficultyType;
 };
 
 export type HistoryTypeMap = {
   "2048": history2048Type[];
   slidingPuzzle: sliding_puzzle_history[];
   wordle: number[];
+  memoryCard: MemoryCardStateType;
 };
 
 type VariantState<V extends Games> = Partial<
