@@ -19,7 +19,7 @@ export default function Page2048() {
   const hasKeys = Object.keys(variants_history).length > 0;
   const firstKey = hasKeys ? Object.keys(variants_history)[0] : undefined;
 
-  const contineuAction = () => {
+  const continueAction = () => {
     if (variants_history && firstKey) {
       const history = variants_history[firstKey as variants2048];
       if (history) {
@@ -35,7 +35,7 @@ export default function Page2048() {
         <SelectionTemplate
           select_text="Select Size"
           setSelecting={setSelecting}
-          continue_action={contineuAction}
+          continue_action={continueAction}
           continue_variation={firstKey}>
           <div className="w-10/12">
             <Board board={emptyBoard}></Board>

@@ -1,6 +1,8 @@
 import FlipCard from "@/components/flip";
-import { MemoryCardCardType } from "@/types";
+import { difficultyType, MemoryCardCardType } from "@/types";
 import { MemoryCard } from "./logic";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 function Board({
   game,
@@ -9,23 +11,38 @@ function Board({
   game: MemoryCard;
   onClick?: (i: number) => void;
 }) {
+  const [hide, setHide] = useState(false);
+
+  useEffect(() => {
+    if (game.turns === 0) {
+      setHide(true);
+      setTimeout(() => {
+        setHide(false);
+      }, 600);
+    }
+  }, [game]);
+
   const { board, images_mapping, images_variant } = game;
 
   return (
     <div
-      style={{
-        gridTemplateRows: `repeat(${Math.floor(board.length / 4)}, 1fr)`,
-      }}
-      className="grid grid-cols-4 w-full h-80">
+      className={cn(
+        ["grid h-[360px] w-full px-3  gap-y-2"],
+        game.difficulty === "hard"
+          ? "grid-cols-5 gap-x-2"
+          : "grid-cols-4 gap-x-4"
+      )}>
       {board.map((card, i) => (
         <Card
           key={i}
           card={card}
           onClick={() => onClick(i)}
-          back_image={`memory_card/foreground/${images_mapping[card.number]}/${
-            images_mapping[card.number]
-          }-dynamic-${images_variant}.png`}
-          front_image={`memory_card/background/${images_variant}.svg`}
+          difficulty={game.difficulty}
+          hidden_image={
+            hide
+              ? "#"
+              : `memory_card/foreground/${images_mapping[card.number]}/${images_variant}.png`
+          }
         />
       ))}
     </div>
@@ -35,42 +52,57 @@ function Board({
 interface CardProps {
   card: MemoryCardCardType;
   onClick?: () => void;
-  back_image?: string;
-  front_image?: string;
+  hidden_image?: string;
+  difficulty?: difficultyType;
 }
 
 function Card({
   card,
   onClick = () => {},
-  back_image = undefined,
-  front_image = undefined,
+  hidden_image = undefined,
+  difficulty = "easy",
 }: CardProps) {
+  const color = "#2563eb";
+  var size = 13;
+  var border = "border-5";
+  if (difficulty === "medium") {
+    size = 11;
+    border = "border-4";
+  } else if (difficulty === "hard") {
+    size = 10;
+    border = "border-3";
+  }
+
   return (
     <div className="size-full text-center" onClick={onClick}>
       <FlipCard
         classNames={{
-          front: "bg-red-500 size-full border-2 border-primary-800",
-          back: "bg-primary-800 text-secondary-50 text-4xl",
+          front: cn("bg-blue-500 border-green-500 rounded-md border-2", border),
+          back: cn(
+            "bg-blue-300 border-green-500 text-secondary-50 text-4xl rounded-md",
+            border
+          ),
         }}
         front={
           <div
-            className="size-full"
+            className="size-full bg-"
             style={{
-              backgroundImage: front_image ? `url(${front_image})` : undefined,
-              backgroundPosition: "center",
-            }}
-            //
-          ></div>
+              background: `linear-gradient(135deg, ${color} 25%, transparent 25%) -${size}px 0,
+              linear-gradient(225deg, ${color} 25%, transparent 25%) -${size}px 0,
+              linear-gradient(315deg, ${color} 25%, transparent 25%),
+              linear-gradient(45deg, ${color} 25%, transparent 25%)`,
+              backgroundSize: `calc(2 * ${size}px) calc(2 * ${size}px)`,
+            }}></div>
         }
         back={
           <div
-            className="size-full flex-center bg-no-repeat bg-contain"
+            className="size-full flex-center bg-no-repeat bg-center bg-contain"
             style={{
-              backgroundImage: back_image ? `url(${back_image})` : undefined,
-            }}
-            //
-          >
-            {back_image ? null : card.number}
+              backgroundImage: hidden_image
+                ? `url(${hidden_image})`
+                : undefined,
+            }}>
+            {hidden_image ? null : card.number}
           </div>
         }
         flipped={card.flipped}

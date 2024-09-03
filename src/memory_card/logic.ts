@@ -8,7 +8,7 @@ import {
   MemoryCardStateType,
 } from "@/types";
 
-export const difficultySizeMap: Record<difficultyType, number> = {
+export const difficultyColsMap: Record<difficultyType, number> = {
   easy: 3,
   medium: 4,
   hard: 5,
@@ -39,7 +39,7 @@ export class MemoryCard {
     this.win = false;
   }
   private generateBoard() {
-    const n_cards = difficultySizeMap[this.difficulty] * 4;
+    const n_cards = difficultyColsMap[this.difficulty] * 4;
     const cards: MemoryCardType = Array(n_cards)
       .fill(null)
       .map((_, index) => {
