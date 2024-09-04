@@ -1,7 +1,7 @@
 import MemoryCardGame from "@/memory_card/game";
 import { useGameContext } from "@/games/provider";
 import SelectionTemplate from "@/games/selection_template";
-import { difficulties, difficultyType } from "@/types";
+import { difficultyType } from "@/types";
 import { useState } from "react";
 import DifficultySelector from "@/components/difficulty_selector";
 import { MemoryCard } from "@/memory_card/logic";
@@ -47,7 +47,6 @@ function PageMemoryCard() {
         >
           <DifficultySelector
             selectedDifficulty={variation}
-            labels={difficulties}
             onDifficultyChange={handleDifficultyChange}
           />
         </SelectionTemplate>

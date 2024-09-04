@@ -6,10 +6,12 @@ import useControls from "@/hooks/use-controls";
 import { SlidingPuzzleGameProps, SPvarioationObj2Str } from "@/types";
 import { useGameContext } from "@/games/provider";
 import TerminationDialog from "@/components/termination-dialog";
+import { variationSwitchMap } from "@/pages/sliding_puzzle";
+
+const imageURL = "sliding_puzzle/bird.jpg";
 
 export default function SlidingPuzzleGame({
   game = new SlidingPuzzle(),
-  imageUrl = undefined,
 }: SlidingPuzzleGameProps) {
   const [board, setBoard] = useState(game.board);
   const {
@@ -18,6 +20,7 @@ export default function SlidingPuzzleGame({
   } = useGameContext();
   const crrVariant = SPvarioationObj2Str(game.variant);
   const fastest = high_score["slidingPuzzle"]?.[crrVariant] ?? Infinity;
+  const whatToShow = variationSwitchMap[game.variant.type];
 
   const reRender = () => {
     if (game.win) {
@@ -71,11 +74,17 @@ export default function SlidingPuzzleGame({
         }}
         onReset={reset}
       />
-      <Board size={game.size} board={board} imageUrl={imageUrl} />
+      <Board
+        imageUrl={whatToShow.image ? imageURL : undefined}
+        showNumbers={whatToShow.number ? true : false}
+        size={game.size}
+        board={board}
+      />
       {game.win && (
         <TerminationDialog
           title="You Win"
           buttons={[{ onPress: reset, children: "Play Again" }]}
+          delay={0.1}
         />
       )}
     </div>

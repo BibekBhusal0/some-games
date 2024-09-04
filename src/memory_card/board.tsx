@@ -18,9 +18,9 @@ function Board({
       setHide(true);
       setTimeout(() => {
         setHide(false);
-      }, 600);
+      }, 500);
     }
-  }, [game]);
+  }, [game.turns]);
 
   const { board, images_mapping, images_variant } = game;
 

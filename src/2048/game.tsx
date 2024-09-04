@@ -80,6 +80,7 @@ export default function TwentyFortyEightGame({
       <Board board={board} ids={game.id} />
       {showWin && (
         <TerminationDialog
+          delay={0.2}
           title="You Win"
           buttons={[
             { onPress: reset, children: "New Game Again" },
@@ -89,6 +90,7 @@ export default function TwentyFortyEightGame({
       )}
       {game.gameOver && (
         <TerminationDialog
+          delay={0.2}
           title="Game Over"
           buttons={[
             {
